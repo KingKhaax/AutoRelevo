@@ -40,9 +40,9 @@ Si quieres que arranque al iniciar sesión, crea un acceso directo a `AutoRelevo
 ## Límites conocidos
 
 - Detecta "apagado" por el **estado que Windows asigna al dispositivo** (activo, desactivado, no conectado, no presente).
-- Muchos auriculares inalámbricos con receptor USB (por ejemplo, Logitech Lightspeed) siguen apareciendo como **activos** en Windows aunque los apagues, porque Windows solo ve el receptor. En ese caso AutoRelevo no puede saber que están apagados y no cambia la salida.
+- Auriculares con receptor USB: Windows los sigue viendo **activos** aunque los apagues. Solo el **Logitech G535** está resuelto (v1.6): AutoRelevo escucha al receptor por USB y sabe cuándo se apaga o enciende el auricular. Otros modelos inalámbricos con receptor USB siguen sin detectarse.
 - Los auriculares Bluetooth sí suelen pasar a "no conectado" al apagarlos.
-- Probado: listado de dispositivos, cambio de la salida predeterminada, arranque de la ventana y que ON/OFF y los dispositivos se recuerdan al cerrar y abrir. **Pendiente** de probar con auriculares Logitech reales.
+- Probado: listado de dispositivos, cambio de la salida predeterminada, arranque de la ventana, que ON/OFF y los dispositivos se recuerdan, y la detección de apagado y encendido del Logitech G535.
 - Usa la interfaz `IPolicyConfig` de Windows, que no está documentada oficialmente, para cambiar la salida predeterminada. Es la misma que usan otras herramientas de este tipo, pero una actualización de Windows podría romperla.
 
 ## Compilar
@@ -68,6 +68,7 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 
 ## Historial
 
+- **v1.6** (03/11/2026): soporte del Logitech G535: detecta por USB cuándo se apaga o enciende el auricular y cambia al secundario.
 - **v1.3** (03/11/2026): icono rehecho solo con el emblema circular, con bordes suaves y nitidez en los tamaños pequeños (16 a 256 px), e icono incrustado en el `.exe` para la barra de título. Logo de la ventana con fondo transparente.
 - **v1.2** (03/11/2026): renombrado a **AutoRelevo**, logo e icono, colores del logo (azul y naranja) y se guardan siempre los dispositivos y el estado ON/OFF.
 - **v1.1** (03/11/2026): publicación del repositorio.

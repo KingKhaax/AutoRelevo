@@ -194,6 +194,132 @@ static class Audio
     }
 }
 
+class Headset
+{
+    [StructLayout(LayoutKind.Sequential)]
+    struct InterfaceData { public uint size; public Guid guid; public uint flags; public IntPtr reserved; }
+
+    [DllImport("hid.dll")]
+    static extern void HidD_GetHidGuid(out Guid guid);
+
+    [DllImport("setupapi.dll", SetLastError = true)]
+    static extern IntPtr SetupDiGetClassDevs(ref Guid guid, IntPtr enumerator, IntPtr parent, uint flags);
+
+    [DllImport("setupapi.dll", SetLastError = true)]
+    static extern bool SetupDiEnumDeviceInterfaces(IntPtr set, IntPtr info, ref Guid guid, uint index, ref InterfaceData data);
+
+    [DllImport("setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr set, ref InterfaceData data, IntPtr detail, uint size, out uint required, IntPtr info);
+
+    [DllImport("setupapi.dll")]
+    static extern bool SetupDiDestroyDeviceInfoList(IntPtr set);
+
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(string name, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);
+
+    public Action OnChange;
+    volatile bool off;
+    volatile bool running;
+    FileStream writer;
+
+    public bool Off { get { return off; } }
+
+    public static bool IsHeadset(string name)
+    {
+        return name != null && name.IndexOf("G535", StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    static string FindPath()
+    {
+        Guid hid;
+        HidD_GetHidGuid(out hid);
+        IntPtr set = SetupDiGetClassDevs(ref hid, IntPtr.Zero, IntPtr.Zero, 0x12);
+        string found = null;
+        try
+        {
+            InterfaceData data = new InterfaceData();
+            data.size = (uint)Marshal.SizeOf(typeof(InterfaceData));
+            for (uint i = 0; found == null && SetupDiEnumDeviceInterfaces(set, IntPtr.Zero, ref hid, i, ref data); i++)
+            {
+                uint required;
+                SetupDiGetDeviceInterfaceDetail(set, ref data, IntPtr.Zero, 0, out required, IntPtr.Zero);
+                IntPtr detail = Marshal.AllocHGlobal((int)required);
+                try
+                {
+                    Marshal.WriteInt32(detail, IntPtr.Size == 8 ? 8 : 6);
+                    if (!SetupDiGetDeviceInterfaceDetail(set, ref data, detail, required, out required, IntPtr.Zero)) continue;
+                    string path = Marshal.PtrToStringUni(IntPtr.Add(detail, 4));
+                    if (path.IndexOf("vid_046d&pid_0ac4&mi_03&col02", StringComparison.OrdinalIgnoreCase) >= 0) found = path;
+                }
+                finally { Marshal.FreeHGlobal(detail); }
+            }
+        }
+        finally { SetupDiDestroyDeviceInfoList(set); }
+        return found;
+    }
+
+    static FileStream Open(string path, FileAccess access)
+    {
+        uint mode = access == FileAccess.Read ? 0x80000000 : 0x40000000;
+        Microsoft.Win32.SafeHandles.SafeFileHandle handle = CreateFile(path, mode, 3, IntPtr.Zero, 3, 0, IntPtr.Zero);
+        if (handle.IsInvalid) return null;
+        return new FileStream(handle, access, 64, false);
+    }
+
+    public void Start()
+    {
+        if (running) return;
+        string path = FindPath();
+        if (path == null) return;
+        FileStream reader = Open(path, FileAccess.Read);
+        writer = Open(path, FileAccess.Write);
+        if (reader == null || writer == null) return;
+        running = true;
+        Thread thread = new Thread(delegate () { Listen(reader); });
+        thread.IsBackground = true;
+        thread.Start();
+        Ask();
+    }
+
+    void Ask()
+    {
+        byte[] query = new byte[20];
+        query[0] = 0x11; query[1] = 0xFF; query[2] = 0x05; query[3] = 0x0A;
+        try { writer.Write(query, 0, query.Length); writer.Flush(); } catch (IOException) { }
+    }
+
+    void Listen(FileStream reader)
+    {
+        byte[] buffer = new byte[64];
+        try
+        {
+            while (true)
+            {
+                int n = reader.Read(buffer, 0, buffer.Length);
+                if (n < 5 || buffer[0] != 0x11 || buffer[1] != 0xFF) continue;
+                bool? state = null;
+                if (buffer[2] == 0x05 && buffer[3] == 0x00) state = buffer[4] != 0x10;
+                else if (buffer[2] == 0x05 && buffer[3] == 0x0A) state = false;
+                else if (buffer[2] == 0xFF && buffer[3] == 0x05 && buffer[4] == 0x0A) state = true;
+                if (state.HasValue && state.Value != off)
+                {
+                    off = state.Value;
+                    if (OnChange != null) OnChange();
+                }
+            }
+        }
+        catch (IOException) { }
+        finally
+        {
+            running = false;
+            off = false;
+            reader.Dispose();
+            writer.Dispose();
+            if (OnChange != null) OnChange();
+        }
+    }
+}
+
 class Notifier : IMMNotificationClient
 {
     public Action OnChange;
@@ -214,6 +340,7 @@ class MainForm : Form
     Label status = new Label();
     System.Windows.Forms.Timer debounce = new System.Windows.Forms.Timer();
     Notifier notifier = new Notifier();
+    Headset headset = new Headset();
     string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini");
     bool on;
     string lastError = "";
@@ -284,6 +411,7 @@ class MainForm : Form
 
         notifier.OnChange = delegate { Post(delegate { debounce.Stop(); debounce.Start(); }); };
         notifier.OnDefault = delegate { Post(RefreshStatus); };
+        headset.OnChange = delegate { Post(delegate { debounce.Stop(); debounce.Start(); }); };
     }
 
     void Post(Action action)
@@ -395,7 +523,8 @@ class MainForm : Form
         {
             string p = Selected(primary), s = Selected(secondary);
             string target = null;
-            if (p != null && Audio.StateOf(p) == 1) target = p;
+            headset.Start();
+            if (p != null && Audio.StateOf(p) == 1 && !(headset.Off && Headset.IsHeadset(Audio.NameById(p)))) target = p;
             else if (s != null && Audio.StateOf(s) == 1) target = s;
             try
             {

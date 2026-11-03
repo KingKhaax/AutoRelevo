@@ -49,13 +49,13 @@ CÓMO FUNCIONA
 LÍMITES CONOCIDOS (importante)
 - El programa detecta "apagado" por el estado que Windows da al dispositivo
   (activo / desactivado / no conectado / no presente).
-- Muchos auriculares inalámbricos con receptor USB (por ejemplo Logitech Lightspeed) siguen
-  apareciendo como ACTIVOS en Windows aunque los apagues, porque Windows solo ve el receptor.
-  En ese caso el programa no puede saber que están apagados y no cambiará la salida.
-  Si pasa, hay que buscar otra señal (G Hub o medidor de volumen del dispositivo). Pedir esa mejora.
+- Auriculares con receptor USB: Windows los sigue viendo ACTIVOS aunque los apagues. Solo el
+  Logitech G535 está resuelto (v1.6): el programa escucha al receptor por USB y sabe cuándo se
+  apaga o enciende el auricular. Otros modelos inalámbricos con receptor USB siguen sin detectarse.
+  Si pasa, pedir la mejora para ese modelo.
 - Los auriculares Bluetooth sí suelen pasar a "no conectado" al apagarlos.
-- Probado: lista de dispositivos y cambio de la salida predeterminada (con la misma salida,
-  sin cambiar nada). Pendiente de probar con los auriculares Logitech reales.
+- Probado: lista de dispositivos, cambio de la salida predeterminada y detección de apagado
+  y encendido del Logitech G535 (v1.6).
 - No se inicia con Windows (es portable). Si quieres que arranque al iniciar sesión, crea
   un acceso directo al .exe en shell:startup.
 
@@ -92,3 +92,5 @@ HISTORIAL DE CAMBIOS
 - 03/11/2026  v1.4  LEEME.txt con instrucciones para descargarlo y seguir trabajando desde casa.
 - 03/11/2026  v1.5  Repositorio publico y commits con la identidad sr.kitkat (correo anonimo de GitHub).
                     Corregida la frase del LEEME que decia que el repositorio era privado.
+- 03/11/2026  v1.6  Soporte del Logitech G535 (receptor USB): escucha los avisos de apagado y encendido
+                    del auricular por USB y, si el principal es un G535 apagado, pasa al secundario.
