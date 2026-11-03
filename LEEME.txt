@@ -1,0 +1,67 @@
+﻿AUTOSALIDA - PROGRAMA PORTABLE (no se instala)
+====================================================
+
+CONTENIDO DE LA CARPETA
+- AutoSalida.exe   El programa. Se abre con doble clic. No instala nada y no toca el registro.
+- LEEME.txt             Este archivo: el prompt original, cómo funciona y el historial de cambios.
+- fuente\AutoSalida.cs   Código fuente (para recompilar o modificar).
+- config.ini            Se crea solo junto al .exe al elegir dispositivos. Guarda principal, secundario y ON/OFF.
+
+PROMPT / PETICIÓN (resumen de lo que se pidió)
+Quiero que, cuando apague mis auriculares, Windows active automáticamente como salida de audio
+otra salida (por ejemplo la barra de sonido). Cuando los enciendo, ya funcionan solos.
+
+Requisitos:
+- Portable, NO instalable.
+- Óptimo, que funcione al 100 % y que no consuma (0 % de CPU, sin sondeo continuo).
+- Una ventana con:
+    "Dispositivo de salida PRINCIPAL:"  -> al hacer clic salen TODOS los dispositivos de salida
+                                           que Windows tiene detectados.
+    "Dispositivo de salida SECUNDARIO"  -> solo se activa cuando el principal está apagado,
+                                           desconectado o desactivado.
+    Un botón ON/OFF abajo para activar o desactivar la función del programa.
+- Código sin comentarios.
+- No tocar ni actualizar drivers de Logitech ni G Hub.
+- Si algo no puede funcionar al 100 %, decirlo claro.
+- Todo dentro de la carpeta "AutoSalida" del escritorio, con este .txt actualizado
+  cada vez que se pida una mejora, un añadido o una edición.
+
+CÓMO SE USA
+1. Abre AutoSalida.exe.
+2. Elige el dispositivo PRINCIPAL (tus auriculares) y el SECUNDARIO (la barra de sonido).
+   Los dispositivos activos salen primero; los desconectados, al final entre corchetes.
+3. Pulsa el botón. ROJO "OFF" = desactivado, VERDE "ON" = activado.
+4. Con ON, deja la ventana abierta (puedes minimizarla).
+   Se recuerda la última configuración al volver a abrirlo.
+
+CÓMO FUNCIONA
+- Se suscribe a los avisos de audio de Windows (IMMNotificationClient). No hace comprobaciones
+  periódicas: espera sin consumir y solo reacciona cuando un dispositivo cambia de estado,
+  se añade o se quita.
+- Al recibir un aviso espera 0,6 s (para agrupar avisos seguidos) y decide:
+    1) Si el principal está ACTIVO  -> lo pone como salida predeterminada.
+    2) Si no, y el secundario está ACTIVO -> pone el secundario.
+    3) Si ninguno está activo, no cambia nada.
+- Cambia la salida predeterminada en los tres roles de Windows (consola, multimedia y comunicaciones).
+- Con OFF no cambia ninguna salida.
+- Solo se permite una copia abierta a la vez.
+
+LÍMITES CONOCIDOS (importante)
+- El programa detecta "apagado" por el estado que Windows da al dispositivo
+  (activo / desactivado / no conectado / no presente).
+- Muchos auriculares inalámbricos con receptor USB (por ejemplo Logitech Lightspeed) siguen
+  apareciendo como ACTIVOS en Windows aunque los apagues, porque Windows solo ve el receptor.
+  En ese caso el programa no puede saber que están apagados y no cambiará la salida.
+  Si pasa, hay que buscar otra señal (G Hub o medidor de volumen del dispositivo). Pedir esa mejora.
+- Los auriculares Bluetooth sí suelen pasar a "no conectado" al apagarlos.
+- Probado: lista de dispositivos y cambio de la salida predeterminada (con la misma salida,
+  sin cambiar nada). Pendiente de probar con los auriculares Logitech reales.
+- No se inicia con Windows (es portable). Si quieres que arranque al iniciar sesión, crea
+  un acceso directo al .exe en shell:startup.
+
+HISTORIAL DE CAMBIOS
+- 03/11/2026  v1.0  Primera versión. Ventana con PRINCIPAL, SECUNDARIO y botón ON/OFF.
+                    Detección por eventos (0 % CPU en reposo). Lista ordenada (activos primero)
+                    y sin dispositivos sin nombre. Configuración guardada en config.ini.
+- 03/11/2026  v1.1  Renombrado a AutoSalida (carpeta, .exe, código, título de la ventana y este archivo).
+                    Se añade README.md y el repositorio privado de GitHub AutoSalida.
