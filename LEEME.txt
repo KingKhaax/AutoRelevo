@@ -59,6 +59,24 @@ LÍMITES CONOCIDOS (importante)
 - No se inicia con Windows (es portable). Si quieres que arranque al iniciar sesión, crea
   un acceso directo al .exe en shell:startup.
 
+DESDE CASA: DESCARGAR Y SEGUIR TRABAJANDO
+El repositorio es privado: https://github.com/KingKhaax/AutoRelevo
+(hay que tener la sesion de GitHub iniciada con la cuenta KingKhaax).
+
+Descargar solo este LEEME.txt al escritorio:
+  1. Abre https://github.com/KingKhaax/AutoRelevo/blob/main/LEEME.txt
+  2. Pulsa el icono de descargar ("Download raw file") arriba a la derecha del archivo.
+  3. Guardalo en el escritorio.
+
+Descargar todo el programa:
+  - Opcion A: en la pagina del repositorio, boton verde "Code" -> "Download ZIP". Descomprime en el escritorio.
+  - Opcion B: git clone https://github.com/KingKhaax/AutoRelevo.git
+
+Seguir trabajando con una sesion de Claude en casa (copia y pega):
+  "Lee LEEME.txt y README.md de esta carpeta. Es el programa AutoRelevo. Cuando te pida una mejora:
+  edita fuente\AutoRelevo.cs, recompila el .exe con el comando del README, actualiza el historial
+  de LEEME.txt y README.md, y sube los cambios a GitHub. Codigo sin comentarios y commits a mi nombre,
+  sin ninguna referencia a Claude."
 HISTORIAL DE CAMBIOS
 - 03/11/2026  v1.0  Primera versión. Ventana con PRINCIPAL, SECUNDARIO y botón ON/OFF.
                     Detección por eventos (0 % CPU en reposo). Lista ordenada (activos primero)
@@ -71,3 +89,4 @@ HISTORIAL DE CAMBIOS
                     Si un dispositivo guardado ya no aparece, se conserva como no encontrado.
 - 03/11/2026  v1.3  Icono rehecho solo con el emblema circular (9 tamanos, de 16 a 256 px), bordes suaves.
                     Icono incrustado en el .exe tambien para la barra de titulo. Logo de la ventana transparente.
+- 03/11/2026  v1.4  LEEME.txt con instrucciones para descargarlo y seguir trabajando desde casa.
