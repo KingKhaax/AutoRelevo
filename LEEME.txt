@@ -1,10 +1,10 @@
-﻿AUTOSALIDA - PROGRAMA PORTABLE (no se instala)
+﻿AUTORELEVO - PROGRAMA PORTABLE (no se instala)
 ====================================================
 
 CONTENIDO DE LA CARPETA
-- AutoSalida.exe   El programa. Se abre con doble clic. No instala nada y no toca el registro.
+- AutoRelevo.exe   El programa. Se abre con doble clic. No instala nada y no toca el registro.
 - LEEME.txt             Este archivo: el prompt original, cómo funciona y el historial de cambios.
-- fuente\AutoSalida.cs   Código fuente (para recompilar o modificar).
+- fuente\AutoRelevo.cs   Código fuente (para recompilar o modificar).
 - config.ini            Se crea solo junto al .exe al elegir dispositivos. Guarda principal, secundario y ON/OFF.
 
 PROMPT / PETICIÓN (resumen de lo que se pidió)
@@ -23,16 +23,16 @@ Requisitos:
 - Código sin comentarios.
 - No tocar ni actualizar drivers de Logitech ni G Hub.
 - Si algo no puede funcionar al 100 %, decirlo claro.
-- Todo dentro de la carpeta "AutoSalida" del escritorio, con este .txt actualizado
+- Todo dentro de la carpeta "AutoRelevo" del escritorio, con este .txt actualizado
   cada vez que se pida una mejora, un añadido o una edición.
 
 CÓMO SE USA
-1. Abre AutoSalida.exe.
+1. Abre AutoRelevo.exe.
 2. Elige el dispositivo PRINCIPAL (tus auriculares) y el SECUNDARIO (la barra de sonido).
    Los dispositivos activos salen primero; los desconectados, al final entre corchetes.
-3. Pulsa el botón. ROJO "OFF" = desactivado, VERDE "ON" = activado.
+3. Pulsa el botón. NARANJA "OFF" = desactivado, AZUL "ON" = activado.
 4. Con ON, deja la ventana abierta (puedes minimizarla).
-   Se recuerda la última configuración al volver a abrirlo.
+   Se recuerdan los dispositivos y el estado ON/OFF: si lo dejas en OFF se queda en OFF al cerrar y abrir, y lo mismo con ON.
 
 CÓMO FUNCIONA
 - Se suscribe a los avisos de audio de Windows (IMMNotificationClient). No hace comprobaciones
@@ -63,5 +63,9 @@ HISTORIAL DE CAMBIOS
 - 03/11/2026  v1.0  Primera versión. Ventana con PRINCIPAL, SECUNDARIO y botón ON/OFF.
                     Detección por eventos (0 % CPU en reposo). Lista ordenada (activos primero)
                     y sin dispositivos sin nombre. Configuración guardada en config.ini.
-- 03/11/2026  v1.1  Renombrado a AutoSalida (carpeta, .exe, código, título de la ventana y este archivo).
-                    Se añade README.md y el repositorio privado de GitHub AutoSalida.
+- 03/11/2026  v1.1  Renombrado a AutoRelevo (carpeta, .exe, código, título de la ventana y este archivo).
+                    Se añade README.md y el repositorio privado de GitHub AutoRelevo.
+- 03/11/2026  v1.2  Renombrado a AutoRelevo (carpeta, .exe, codigo, ventana, GitHub).
+                    Logo e icono del programa y colores del logo (azul y naranja).
+                    Se guardan siempre los dispositivos y el estado ON/OFF, tambien al cerrar.
+                    Si un dispositivo guardado ya no aparece, se conserva como no encontrado.

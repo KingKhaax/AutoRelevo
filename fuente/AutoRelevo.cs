@@ -217,39 +217,60 @@ class MainForm : Form
     string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini");
     bool on;
     string lastError = "";
+    static readonly Color Bg = Color.FromArgb(245, 249, 250);
+    static readonly Color Navy = Color.FromArgb(16, 31, 58);
+    static readonly Color Blue = Color.FromArgb(47, 134, 182);
+    static readonly Color Orange = Color.FromArgb(227, 124, 58);
 
     public MainForm()
     {
-        Text = "AutoSalida";
+        Text = "AutoRelevo";
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
-        ClientSize = new Size(480, 270);
+        ClientSize = new Size(480, 400);
+        BackColor = Bg;
+        Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
+        PictureBox logo = new PictureBox();
+        logo.Image = Image.FromStream(typeof(MainForm).Assembly.GetManifestResourceStream("logo.png"));
+        logo.SizeMode = PictureBoxSizeMode.Zoom;
+        logo.SetBounds(140, 8, 200, 120);
+        Controls.Add(logo);
 
         Label l1 = new Label();
         l1.Text = "Dispositivo de salida PRINCIPAL:";
-        l1.SetBounds(20, 15, 440, 20);
+        l1.ForeColor = Navy;
+        l1.SetBounds(20, 140, 440, 20);
         Controls.Add(l1);
 
         primary.DropDownStyle = ComboBoxStyle.DropDownList;
-        primary.SetBounds(20, 38, 440, 24);
+        primary.BackColor = Color.White;
+        primary.ForeColor = Navy;
+        primary.SetBounds(20, 163, 440, 24);
         Controls.Add(primary);
 
         Label l2 = new Label();
         l2.Text = "Dispositivo de salida SECUNDARIO (solo cuando el principal este apagado o desactivado):";
-        l2.SetBounds(20, 78, 440, 34);
+        l2.ForeColor = Navy;
+        l2.SetBounds(20, 203, 440, 34);
         Controls.Add(l2);
 
         secondary.DropDownStyle = ComboBoxStyle.DropDownList;
-        secondary.SetBounds(20, 115, 440, 24);
+        secondary.BackColor = Color.White;
+        secondary.ForeColor = Navy;
+        secondary.SetBounds(20, 240, 440, 24);
         Controls.Add(secondary);
 
-        toggle.SetBounds(20, 160, 440, 48);
+        toggle.SetBounds(20, 285, 440, 48);
         toggle.Font = new Font(Font.FontFamily, 16, FontStyle.Bold);
         toggle.FlatStyle = FlatStyle.Flat;
+        toggle.FlatAppearance.BorderSize = 0;
+        toggle.Cursor = Cursors.Hand;
         Controls.Add(toggle);
 
-        status.SetBounds(20, 218, 440, 44);
+        status.ForeColor = Navy;
+        status.SetBounds(20, 343, 440, 48);
         Controls.Add(status);
 
         debounce.Interval = 600;
@@ -286,14 +307,26 @@ class MainForm : Form
             int index = box.Items.Add(dev);
             if (dev.Id == current) box.SelectedIndex = index;
         }
+        if (current != null && Selected(box) == null) KeepMissing(box, current);
+    }
+
+    void KeepMissing(ComboBox box, string id)
+    {
+        Dev missing = new Dev();
+        missing.Id = id;
+        missing.Name = "Dispositivo guardado (no encontrado)";
+        missing.State = 8;
+        box.SelectedIndex = box.Items.Add(missing);
     }
 
     void Select(ComboBox box, string id)
     {
+        if (string.IsNullOrEmpty(id)) return;
         foreach (object item in box.Items)
         {
             if (((Dev)item).Id == id) box.SelectedItem = item;
         }
+        if (Selected(box) == null) KeepMissing(box, id);
     }
 
     void LoadConfig()
@@ -341,12 +374,12 @@ class MainForm : Form
             string p = Selected(primary), s = Selected(secondary);
             if (p == null || s == null)
             {
-                MessageBox.Show("Elige el dispositivo principal y el secundario.", "AutoSalida");
+                MessageBox.Show("Elige el dispositivo principal y el secundario.", "AutoRelevo");
                 return;
             }
             if (p == s)
             {
-                MessageBox.Show("El principal y el secundario no pueden ser el mismo.", "AutoSalida");
+                MessageBox.Show("El principal y el secundario no pueden ser el mismo.", "AutoRelevo");
                 return;
             }
         }
@@ -379,7 +412,7 @@ class MainForm : Form
     void RefreshStatus()
     {
         toggle.Text = on ? "ON" : "OFF";
-        toggle.BackColor = on ? Color.FromArgb(46, 160, 67) : Color.FromArgb(200, 60, 60);
+        toggle.BackColor = on ? Blue : Orange;
         toggle.ForeColor = Color.White;
         string text = "Salida actual: " + Audio.NameById(Audio.DefaultId());
         if (!on) text += "\nDesactivado: no cambia ninguna salida.";
@@ -398,6 +431,7 @@ class MainForm : Form
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         Audio.Enumerator.UnregisterEndpointNotificationCallback(notifier);
+        SaveConfig();
         base.OnFormClosing(e);
     }
 }
@@ -408,7 +442,7 @@ static class Program
     static void Main()
     {
         bool created;
-        using (Mutex mutex = new Mutex(true, "AutoSalida_portable", out created))
+        using (Mutex mutex = new Mutex(true, "AutoRelevo_portable", out created))
         {
             if (!created) return;
             Application.EnableVisualStyles();
