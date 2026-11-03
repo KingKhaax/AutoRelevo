@@ -82,7 +82,7 @@ HISTORIAL DE CAMBIOS
                     Detección por eventos (0 % CPU en reposo). Lista ordenada (activos primero)
                     y sin dispositivos sin nombre. Configuración guardada en config.ini.
 - 03/11/2026  v1.1  Renombrado a AutoRelevo (carpeta, .exe, código, título de la ventana y este archivo).
-                    Se añade README.md y el repositorio privado de GitHub AutoRelevo.
+                    Se añade README.md y el repositorio de GitHub AutoRelevo.
 - 03/11/2026  v1.2  Renombrado a AutoRelevo (carpeta, .exe, codigo, ventana, GitHub).
                     Logo e icono del programa y colores del logo (azul y naranja).
                     Se guardan siempre los dispositivos y el estado ON/OFF, tambien al cerrar.
