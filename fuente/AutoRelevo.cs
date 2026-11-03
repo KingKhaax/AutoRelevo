@@ -341,6 +341,8 @@ class MainForm : Form
     System.Windows.Forms.Timer debounce = new System.Windows.Forms.Timer();
     Notifier notifier = new Notifier();
     Headset headset = new Headset();
+    NotifyIcon tray = new NotifyIcon();
+    bool exiting;
     string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini");
     bool on;
     string lastError = "";
@@ -357,7 +359,15 @@ class MainForm : Form
         StartPosition = FormStartPosition.CenterScreen;
         ClientSize = new Size(480, 400);
         BackColor = Bg;
-        Icon = new System.Drawing.Icon(typeof(MainForm).Assembly.GetManifestResourceStream("icon.ico"), SystemInformation.SmallIconSize);
+        Icon = new System.Drawing.Icon(typeof(MainForm).Assembly.GetManifestResourceStream("icon.ico"));
+        tray.Icon = new System.Drawing.Icon(typeof(MainForm).Assembly.GetManifestResourceStream("icon.ico"), SystemInformation.SmallIconSize);
+        tray.Text = "AutoRelevo";
+        tray.DoubleClick += delegate { Reveal(); };
+        ContextMenuStrip menu = new ContextMenuStrip();
+        menu.Items.Add("Abrir", null, delegate { Reveal(); });
+        menu.Items.Add("Salir", null, delegate { exiting = true; Close(); });
+        tray.ContextMenuStrip = menu;
+        tray.Visible = true;
 
         PictureBox logo = new PictureBox();
         logo.Image = Image.FromStream(typeof(MainForm).Assembly.GetManifestResourceStream("logo.png"));
@@ -412,6 +422,11 @@ class MainForm : Form
         notifier.OnChange = delegate { Post(delegate { debounce.Stop(); debounce.Start(); }); };
         notifier.OnDefault = delegate { Post(RefreshStatus); };
         headset.OnChange = delegate { Post(delegate { debounce.Stop(); debounce.Start(); }); };
+    }
+
+    public void Reveal()
+    {
+        Post(delegate { Show(); WindowState = FormWindowState.Normal; Activate(); });
     }
 
     void Post(Action action)
@@ -559,6 +574,14 @@ class MainForm : Form
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        if (!exiting && e.CloseReason != CloseReason.WindowsShutDown)
+        {
+            e.Cancel = true;
+            Hide();
+            return;
+        }
+        tray.Visible = false;
+        tray.Dispose();
         Audio.Enumerator.UnregisterEndpointNotificationCallback(notifier);
         SaveConfig();
         base.OnFormClosing(e);
@@ -573,9 +596,12 @@ static class Program
         bool created;
         using (Mutex mutex = new Mutex(true, "AutoRelevo_portable", out created))
         {
-            if (!created) return;
+            EventWaitHandle wake = new EventWaitHandle(false, EventResetMode.AutoReset, "AutoRelevo_mostrar");
+            if (!created) { wake.Set(); return; }
+            MainForm form = new MainForm();
+            ThreadPool.RegisterWaitForSingleObject(wake, delegate { form.Reveal(); }, null, -1, false);
             Application.EnableVisualStyles();
-            Application.Run(new MainForm());
+            Application.Run(form);
         }
     }
 }

@@ -68,6 +68,7 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 
 ## Historial
 
+- **v1.7** (03/11/2026): al cerrar con la X sigue funcionando en segundo plano (icono junto al reloj con menú Abrir y Salir) e icono propio en la barra de tareas.
 - **v1.6** (03/11/2026): soporte del Logitech G535: detecta por USB cuándo se apaga o enciende el auricular y cambia al secundario.
 - **v1.3** (03/11/2026): icono rehecho solo con el emblema circular, con bordes suaves y nitidez en los tamaños pequeños (16 a 256 px), e icono incrustado en el `.exe` para la barra de título. Logo de la ventana con fondo transparente.
 - **v1.2** (03/11/2026): renombrado a **AutoRelevo**, logo e icono, colores del logo (azul y naranja) y se guardan siempre los dispositivos y el estado ON/OFF.

@@ -94,3 +94,5 @@ HISTORIAL DE CAMBIOS
                     Corregida la frase del LEEME que decia que el repositorio era privado.
 - 03/11/2026  v1.6  Soporte del Logitech G535 (receptor USB): escucha los avisos de apagado y encendido
                     del auricular por USB y, si el principal es un G535 apagado, pasa al secundario.
+- 03/11/2026  v1.7  Al cerrar con la X sigue funcionando en segundo plano (icono junto al reloj, menu Abrir/Salir).
+                    Icono propio tambien en la barra de tareas. Abrir el .exe con otra copia en marcha muestra la ventana.
