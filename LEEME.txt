@@ -44,6 +44,8 @@ CÓMO FUNCIONA
     3) Si ninguno está activo, no cambia nada.
 - Cambia la salida predeterminada en los tres roles de Windows (consola, multimedia y comunicaciones).
 - Con OFF no cambia ninguna salida.
+- Al cerrar la ventana con la X el programa NO se cierra: se oculta junto al reloj (icono de AutoRelevo) y sigue funcionando.
+  Para volver a verlo: doble clic en el icono, clic derecho > Abrir, o abrir el .exe otra vez. Para cerrarlo del todo: clic derecho > Salir.
 - Solo se permite una copia abierta a la vez.
 
 LÍMITES CONOCIDOS (importante)

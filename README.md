@@ -35,6 +35,7 @@ Si quieres que arranque al iniciar sesión, crea un acceso directo a `AutoRelevo
   2. Si no, y el secundario está **activo**, pone el secundario.
   3. Si ninguno está activo, no cambia nada.
 - Cambia la salida predeterminada en los tres roles de Windows: consola, multimedia y comunicaciones.
+- Al cerrar la ventana con la X el programa **no se cierra**: se oculta junto al reloj (icono de AutoRelevo) y sigue funcionando. Para volver a verlo: doble clic en el icono, clic derecho > Abrir, o abrir el `.exe` otra vez. Para cerrarlo del todo: clic derecho > Salir.
 - Solo se permite una copia abierta a la vez.
 
 ## Límites conocidos
