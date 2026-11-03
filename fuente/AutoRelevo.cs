@@ -194,6 +194,29 @@ static class Audio
     }
 }
 
+static class Autostart
+{
+    static string Link { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "AutoRelevo.lnk"); } }
+
+    public static bool IsOn { get { return File.Exists(Link); } }
+
+    public static void Set(bool enable)
+    {
+        if (!enable)
+        {
+            if (File.Exists(Link)) File.Delete(Link);
+            return;
+        }
+        dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("WScript.Shell"));
+        dynamic shortcut = shell.CreateShortcut(Link);
+        shortcut.TargetPath = Application.ExecutablePath;
+        shortcut.Arguments = "/oculto";
+        shortcut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        shortcut.Description = "AutoRelevo";
+        shortcut.Save();
+    }
+}
+
 class Headset
 {
     [StructLayout(LayoutKind.Sequential)]
@@ -365,6 +388,10 @@ class MainForm : Form
         tray.DoubleClick += delegate { Reveal(); };
         ContextMenuStrip menu = new ContextMenuStrip();
         menu.Items.Add("Abrir", null, delegate { Reveal(); });
+        ToolStripMenuItem auto = new ToolStripMenuItem("Iniciar con Windows");
+        auto.Click += delegate { Autostart.Set(!Autostart.IsOn); };
+        menu.Opening += delegate { auto.Checked = Autostart.IsOn; };
+        menu.Items.Add(auto);
         menu.Items.Add("Salir", null, delegate { exiting = true; Close(); });
         tray.ContextMenuStrip = menu;
         tray.Visible = true;
@@ -567,6 +594,8 @@ class MainForm : Form
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
+        if (Autostart.IsOn) Autostart.Set(true);
+        if (Array.IndexOf(Environment.GetCommandLineArgs(), "/oculto") > 0) Hide();
         LoadConfig();
         Audio.Enumerator.RegisterEndpointNotificationCallback(notifier);
         Evaluate();
