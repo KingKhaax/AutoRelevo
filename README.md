@@ -51,7 +51,7 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 
 ```powershell
 & "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /nologo /target:winexe /platform:x64 /optimize `
-  /win32icon:fuente\recursos\icon.ico /resource:fuente\recursos\logo.png,logo.png `
+  /win32icon:fuente\recursos\icon.ico /resource:fuente\recursos\logo_ui.png,logo.png /resource:fuente\recursos\icon.ico,icon.ico `
   /r:System.Windows.Forms.dll /r:System.Drawing.dll `
   /out:AutoRelevo.exe fuente\AutoRelevo.cs
 ```
@@ -62,12 +62,13 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 |---|---|
 | `AutoRelevo.exe` | El programa portable |
 | `fuente/AutoRelevo.cs` | Código fuente (un solo archivo, C#, WinForms) |
-| `fuente/recursos/` | Logo (`logo.png`) e icono (`icon.ico`), que se incrustan en el `.exe` |
+| `fuente/recursos/` | `logo.png` (original), `logo_ui.png` (logo con fondo transparente para la ventana) e `icon.ico` (9 tamaños, de 16 a 256 px). Los dos últimos se incrustan en el `.exe` |
 | `LEEME.txt` | La petición original, cómo funciona y el historial de cambios |
 | `config.ini` | Se crea solo al elegir dispositivos (no se sube al repositorio) |
 
 ## Historial
 
+- **v1.3** (03/11/2026): icono rehecho solo con el emblema circular, con bordes suaves y nitidez en los tamaños pequeños (16 a 256 px), e icono incrustado en el `.exe` para la barra de título. Logo de la ventana con fondo transparente.
 - **v1.2** (03/11/2026): renombrado a **AutoRelevo**, logo e icono, colores del logo (azul y naranja) y se guardan siempre los dispositivos y el estado ON/OFF.
 - **v1.1** (03/11/2026): publicación del repositorio.
 - **v1.0** (03/11/2026): primera versión con principal, secundario y botón ON/OFF.

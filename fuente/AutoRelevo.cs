@@ -230,7 +230,7 @@ class MainForm : Form
         StartPosition = FormStartPosition.CenterScreen;
         ClientSize = new Size(480, 400);
         BackColor = Bg;
-        Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        Icon = new System.Drawing.Icon(typeof(MainForm).Assembly.GetManifestResourceStream("icon.ico"), SystemInformation.SmallIconSize);
 
         PictureBox logo = new PictureBox();
         logo.Image = Image.FromStream(typeof(MainForm).Assembly.GetManifestResourceStream("logo.png"));

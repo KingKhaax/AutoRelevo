@@ -69,3 +69,5 @@ HISTORIAL DE CAMBIOS
                     Logo e icono del programa y colores del logo (azul y naranja).
                     Se guardan siempre los dispositivos y el estado ON/OFF, tambien al cerrar.
                     Si un dispositivo guardado ya no aparece, se conserva como no encontrado.
+- 03/11/2026  v1.3  Icono rehecho solo con el emblema circular (9 tamanos, de 16 a 256 px), bordes suaves.
+                    Icono incrustado en el .exe tambien para la barra de titulo. Logo de la ventana transparente.
