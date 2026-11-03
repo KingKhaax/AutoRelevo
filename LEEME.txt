@@ -60,8 +60,8 @@ LÍMITES CONOCIDOS (importante)
   un acceso directo al .exe en shell:startup.
 
 DESDE CASA: DESCARGAR Y SEGUIR TRABAJANDO
-El repositorio es privado: https://github.com/KingKhaax/AutoRelevo
-(hay que tener la sesion de GitHub iniciada con la cuenta KingKhaax).
+El repositorio es publico: https://github.com/KingKhaax/AutoRelevo
+(no hace falta iniciar sesion para verlo ni descargarlo).
 
 Descargar solo este LEEME.txt al escritorio:
   1. Abre https://github.com/KingKhaax/AutoRelevo/blob/main/LEEME.txt
@@ -90,3 +90,5 @@ HISTORIAL DE CAMBIOS
 - 03/11/2026  v1.3  Icono rehecho solo con el emblema circular (9 tamanos, de 16 a 256 px), bordes suaves.
                     Icono incrustado en el .exe tambien para la barra de titulo. Logo de la ventana transparente.
 - 03/11/2026  v1.4  LEEME.txt con instrucciones para descargarlo y seguir trabajando desde casa.
+- 03/11/2026  v1.5  Repositorio publico y commits con la identidad sr.kitkat (correo anonimo de GitHub).
+                    Corregida la frase del LEEME que decia que el repositorio era privado.
