@@ -98,7 +98,7 @@ Cómo se resolvió (v1.6), clase Headset en fuente/AutoRelevo.cs:
 Segundo plano e icono (v1.7):
 - Cerrar con la X oculta la ventana y deja el programa en marcha junto al reloj (NotifyIcon con menú Abrir/Salir). Solo "Salir" o el apagado de Windows cierran de verdad (exiting y CloseReason.WindowsShutDown en OnFormClosing).
 - Una segunda copia no se abre: avisa a la primera con un EventWaitHandle (AutoRelevo_mostrar) y esta muestra su ventana.
-- Icono de la ventana: el .ico completo; icono del área de notificación: tamaño pequeño del sistema. El usuario se quejaba de que la barra de tareas salía sin icono; está sin confirmar visualmente que quedara bien.
+- Icono de la ventana: el .ico completo; icono del área de notificación: tamaño pequeño del sistema. El usuario se quejaba de que la barra de tareas salía sin icono; el usuario confirmó que ya sale bien.
 
 Arranque con Windows (v1.8):
 - Clic derecho en el icono junto al reloj > "Iniciar con Windows" (casilla). Crea o borra AutoRelevo.lnk en la carpeta de inicio del usuario (shell:startup) con el argumento /oculto; no toca el registro. Clase Autostart en fuente/AutoRelevo.cs.
