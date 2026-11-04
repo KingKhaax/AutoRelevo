@@ -87,8 +87,8 @@ Cómo se resolvió (v1.6), clase Headset en fuente/AutoRelevo.cs:
 - Busca con SetupAPI la interfaz HID del receptor cuya ruta contiene vid_046d&pid_0ac4&mi_03&col02 (protocolo HID++ de Logitech, informes largos de 20 bytes que empiezan por 11 FF).
 - La abre dos veces (una para leer, otra para escribir; compartida, no molesta a G HUB) y un hilo en segundo plano espera informes: sin sondeo, 0 % de CPU.
 - Avisos que manda el receptor (determinados observando con un sniffer mientras se apagaba y encendía el auricular):
-  - 11 FF 05 00 00 ... = auricular apagado.
-  - 11 FF 05 00 10 xx 01 ... = auricular encendido (xx no es la batería real: el usuario tenía 100 % y salía 0x32/0x36).
+  - 11 FF 05 00 00 00 ... = auricular apagado (voltaje de bateria 0).
+  - 11 FF 05 00 HH LL 01 ... = auricular encendido: HHLL es el voltaje de la bateria en mV (0x1032 = 4146 mV, 0x0FD7 = 4055 mV). Error corregido en v1.9: antes se tomaba HH != 0x10 como apagado y, al bajar la bateria de 4096 mV (hacia el 86 %), el programa creia que estaban apagados y no volvia a la salida principal. Ahora solo es apagado si HHLL = 0.
 - Al arrancar pregunta el estado enviando 11 FF 05 0A + ceros (20 bytes):
   - responde 11 FF 05 0A 10 xx 01 ... si está encendido.
   - responde 11 FF FF 05 0A 02 ... (error HID++) si está apagado.
@@ -135,3 +135,7 @@ HISTORIAL DE CAMBIOS
                     Icono propio tambien en la barra de tareas. Abrir el .exe con otra copia en marcha muestra la ventana.
 - 03/11/2026  v1.8  Arranque con Windows desde el menu del icono (acceso directo en shell:startup, arranca oculto).
                     Notas tecnicas para otras sesiones en este archivo y en README.md.
+- 04/11/2026  v1.9  Corregido: con la bateria del G535 por debajo de ~4,1 V (aprox. 86 %) creia los auriculares apagados
+                    y no volvia a la salida principal al encenderlos. Ahora el apagado es solo voltaje 0 en el aviso del receptor.
+                    Nota: el .exe puede estar en otra carpeta (el usuario lo tiene en AppData\Local\AutoRelevo, con su config.ini al lado);
+                    al sustituirlo hay que cerrar el proceso y relanzarlo.

@@ -75,8 +75,8 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 - Busca con SetupAPI la interfaz HID del receptor cuya ruta contiene `vid_046d&pid_0ac4&mi_03&col02` (protocolo HID++ de Logitech, informes largos de 20 bytes que empiezan por `11 FF`).
 - La abre dos veces (una para leer, otra para escribir; compartida, no molesta a G HUB) y un hilo en segundo plano espera informes: sin sondeo, 0 % de CPU.
 - Avisos que manda el receptor (determinados observando con un sniffer mientras se apagaba y encendía el auricular):
-  - `11 FF 05 00 00 ...` = auricular **apagado**.
-  - `11 FF 05 00 10 xx 01 ...` = auricular **encendido** (`xx` no es la batería real: el usuario tenía 100 % y salía `0x32`/`0x36`).
+  - `11 FF 05 00 00 00 ...` = auricular **apagado** (voltaje de batería 0).
+  - `11 FF 05 00 HH LL 01 ...` = auricular **encendido**: `HHLL` es el **voltaje de la batería en mV** (0x1032 = 4146 mV, 0x0FD7 = 4055 mV). Error corregido en v1.9: antes se tomaba `HH != 0x10` como apagado y, al bajar la batería de 4096 mV (hacia el 86 %), el programa creía que estaban apagados y no volvía a la salida principal. Ahora solo es apagado si `HHLL` = 0.
 - Al arrancar pregunta el estado enviando `11 FF 05 0A` + ceros (20 bytes):
   - responde `11 FF 05 0A 10 xx 01 ...` si está **encendido**.
   - responde `11 FF FF 05 0A 02 ...` (error HID++) si está **apagado**.
@@ -104,6 +104,7 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 
 ## Historial
 
+- **v1.9** (04/11/2026): corregido que, con la batería del G535 por debajo de ~4,1 V (≈ 86 %), el programa creyera los auriculares apagados y no volviera a la salida principal al encenderlos.
 - **v1.8** (03/11/2026): arranque con Windows desde el menú del icono (acceso directo en la carpeta de inicio, arranca oculto) y notas técnicas para otras sesiones.
 - **v1.7** (03/11/2026): al cerrar con la X sigue funcionando en segundo plano (icono junto al reloj con menú Abrir y Salir) e icono propio en la barra de tareas.
 - **v1.6** (03/11/2026): soporte del Logitech G535: detecta por USB cuándo se apaga o enciende el auricular y cambia al secundario.

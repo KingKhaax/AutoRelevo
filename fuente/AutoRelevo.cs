@@ -321,7 +321,7 @@ class Headset
                 int n = reader.Read(buffer, 0, buffer.Length);
                 if (n < 5 || buffer[0] != 0x11 || buffer[1] != 0xFF) continue;
                 bool? state = null;
-                if (buffer[2] == 0x05 && buffer[3] == 0x00) state = buffer[4] != 0x10;
+                if (buffer[2] == 0x05 && buffer[3] == 0x00) state = buffer[4] == 0 && buffer[5] == 0;
                 else if (buffer[2] == 0x05 && buffer[3] == 0x0A) state = false;
                 else if (buffer[2] == 0xFF && buffer[3] == 0x05 && buffer[4] == 0x0A) state = true;
                 if (state.HasValue && state.Value != off)
