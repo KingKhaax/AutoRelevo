@@ -25,7 +25,7 @@ AutoRelevo **recuerda los dispositivos elegidos y si lo dejaste en ON o en OFF**
 
 La configuración se guarda en un `config.ini` junto al `.exe`. Para borrar todo rastro, borra la carpeta.
 
-Si quieres que arranque solo al iniciar sesión, haz clic derecho en el icono junto al reloj y marca **Iniciar con Windows**. Crea un acceso directo en la carpeta de inicio (no toca el registro) y arranca oculto, sin ventana. Si mueves la carpeta del programa, ábrelo una vez desde la nueva ubicación y se actualiza solo.
+Si quieres que arranque solo al iniciar sesión, haz clic derecho en el icono junto al reloj y marca **Iniciar con Windows**. Crea una tarea programada de Windows "al iniciar sesión" (sin permisos de administrador, no toca el registro) y arranca oculto, sin ventana. Si mueves la carpeta del programa, ábrelo una vez desde la nueva ubicación y se actualiza solo.
 
 ## Cómo funciona
 
@@ -89,8 +89,9 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 - Icono de la ventana: el `.ico` completo; icono del área de notificación: tamaño pequeño del sistema. El usuario se quejaba de que la barra de tareas salía sin icono; el usuario confirmó que ya sale bien.
 
 **Arranque con Windows (v1.8):**
-- Clic derecho en el icono junto al reloj > "Iniciar con Windows" (casilla). Crea o borra `AutoRelevo.lnk` en la carpeta de inicio del usuario (`shell:startup`) con el argumento `/oculto`; no toca el registro. Clase `Autostart` en `fuente/AutoRelevo.cs`.
-- Con `/oculto` el programa arranca directamente en segundo plano, sin ventana. Cada vez que arranca con la casilla activa, reescribe el acceso directo con la ruta actual del `.exe`, así que si mueves la carpeta basta con abrirlo una vez desde su nueva ubicación.
+- Clic derecho en el icono junto al reloj > "Iniciar con Windows" (casilla). Desde la v1.10 crea o borra una **tarea programada** de Windows llamada `AutoRelevo` (disparador "al iniciar sesión" del usuario, sin permisos de administrador, creada con `Register-ScheduledTask` lanzado desde `powershell.exe` oculto). Clase `Autostart` en `fuente/AutoRelevo.cs`.
+- Por qué no el acceso directo en `shell:startup` (v1.8-v1.9): Windows retrasa las apps de esa carpeta hasta que el PC está tranquilo; en el PC del usuario AutoRelevo arrancó 2 min 20 s después de cargar el escritorio. `schtasks /create /sc onlogon` da "Acceso denegado" sin administrador, pero `Register-ScheduledTask -AtLogOn -User <usuario>` sí funciona. Al activar, también se borra el `.lnk` antiguo.
+- Con `/oculto` el programa arranca directamente en segundo plano, sin ventana. Cada vez que arranca con la tarea activa, la reescribe en un hilo aparte con la ruta actual del `.exe`. Ojo: no poner barras invertidas dentro de las cadenas de C# que van a PowerShell (se rompen); por eso el usuario se obtiene con `WindowsIdentity.GetCurrent().Name`.
 - El usuario pidió que arrancase solo con Windows y se dejó activado en su escritorio (`C:\Users\Usuario\Desktop\AutoRelevo.exe`).
 
 **Trampas encontradas (para no repetirlas):**
@@ -104,6 +105,7 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 
 ## Historial
 
+- **v1.10** (06/11/2026): el arranque con Windows usa una tarea programada al iniciar sesión en lugar del acceso directo de la carpeta de inicio, que Windows retrasaba más de 2 minutos.
 - **v1.9** (04/11/2026): corregido que, con la batería del G535 por debajo de ~4,1 V (≈ 86 %), el programa creyera los auriculares apagados y no volviera a la salida principal al encenderlos.
 - **v1.8** (03/11/2026): arranque con Windows desde el menú del icono (acceso directo en la carpeta de inicio, arranca oculto) y notas técnicas para otras sesiones.
 - **v1.7** (03/11/2026): al cerrar con la X sigue funcionando en segundo plano (icono junto al reloj con menú Abrir y Salir) e icono propio en la barra de tareas.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -198,22 +199,37 @@ static class Autostart
 {
     static string Link { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "AutoRelevo.lnk"); } }
 
-    public static bool IsOn { get { return File.Exists(Link); } }
+    static bool Run(string file, string args)
+    {
+        ProcessStartInfo info = new ProcessStartInfo(file, args);
+        info.CreateNoWindow = true;
+        info.UseShellExecute = false;
+        using (Process process = Process.Start(info))
+        {
+            process.WaitForExit();
+            return process.ExitCode == 0;
+        }
+    }
+
+    public static bool IsOn { get { return Run("schtasks.exe", "/query /tn AutoRelevo"); } }
 
     public static void Set(bool enable)
     {
-        if (!enable)
+        if (File.Exists(Link)) File.Delete(Link);
+        string script;
+        if (enable)
         {
-            if (File.Exists(Link)) File.Delete(Link);
-            return;
+            script = "$u=[Security.Principal.WindowsIdentity]::GetCurrent().Name;" +
+                "$a=New-ScheduledTaskAction -Execute '" + Application.ExecutablePath + "' -Argument '/oculto';" +
+                "$t=New-ScheduledTaskTrigger -AtLogOn -User $u;" +
+                "$s=New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero);" +
+                "Register-ScheduledTask -TaskName AutoRelevo -Action $a -Trigger $t -Settings $s -RunLevel Limited -Force | Out-Null";
         }
-        dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("WScript.Shell"));
-        dynamic shortcut = shell.CreateShortcut(Link);
-        shortcut.TargetPath = Application.ExecutablePath;
-        shortcut.Arguments = "/oculto";
-        shortcut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        shortcut.Description = "AutoRelevo";
-        shortcut.Save();
+        else
+        {
+            script = "Unregister-ScheduledTask -TaskName AutoRelevo -Confirm:$false";
+        }
+        Run("powershell.exe", "-NoProfile -NonInteractive -WindowStyle Hidden -Command \"" + script + "\"");
     }
 }
 
@@ -594,11 +610,11 @@ class MainForm : Form
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
-        if (Autostart.IsOn) Autostart.Set(true);
         if (Array.IndexOf(Environment.GetCommandLineArgs(), "/oculto") > 0) Hide();
         LoadConfig();
         Audio.Enumerator.RegisterEndpointNotificationCallback(notifier);
         Evaluate();
+        ThreadPool.QueueUserWorkItem(delegate { if (Autostart.IsOn) Autostart.Set(true); });
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
