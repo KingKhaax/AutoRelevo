@@ -142,3 +142,6 @@ HISTORIAL DE CAMBIOS
                     al sustituirlo hay que cerrar el proceso y relanzarlo.
 - 06/11/2026  v1.10 El arranque con Windows usa una tarea programada al iniciar sesion en vez del acceso directo de la carpeta
                     de inicio, que Windows retrasaba mas de 2 minutos. Menu "Iniciar con Windows" adaptado.
+- 07/11/2026  v1.11 config.ini se crea y se guarda oculto. Para verlo: Explorador > Ver > Mostrar > Elementos ocultos.
+                    Nota tecnica: File.WriteAllLines sobre un archivo oculto da "Acceso denegado"; SaveConfig quita el atributo,
+                    escribe y vuelve a ocultarlo. Si se oculta el archivo a mano con una version anterior, no se podia guardar.

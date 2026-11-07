@@ -23,7 +23,7 @@ Las listas muestran todos los dispositivos de salida que Windows tiene detectado
 
 AutoRelevo **recuerda los dispositivos elegidos y si lo dejaste en ON o en OFF**: al cerrarlo y volver a abrirlo queda exactamente igual. Si un dispositivo guardado ya no aparece en Windows, se conserva en la lista como "no encontrado" en vez de borrarse.
 
-La configuración se guarda en un `config.ini` junto al `.exe`. Para borrar todo rastro, borra la carpeta.
+La configuración se guarda en un `config.ini` oculto junto al `.exe` (Explorador > Ver > Mostrar > Elementos ocultos para verlo). Para borrar todo rastro, borra la carpeta.
 
 Si quieres que arranque solo al iniciar sesión, haz clic derecho en el icono junto al reloj y marca **Iniciar con Windows**. Crea una tarea programada de Windows "al iniciar sesión" (sin permisos de administrador, no toca el registro) y arranca oculto, sin ventana. Si mueves la carpeta del programa, ábrelo una vez desde la nueva ubicación y se actualiza solo.
 
@@ -105,6 +105,7 @@ No hace falta instalar nada: Windows incluye el compilador de C#.
 
 ## Historial
 
+- **v1.11** (07/11/2026): `config.ini` se crea y se guarda **oculto** (atributo de archivo oculto), para que no se vea en el escritorio. Para verlo: Explorador > Ver > Mostrar > Elementos ocultos.
 - **v1.10** (06/11/2026): el arranque con Windows usa una tarea programada al iniciar sesión en lugar del acceso directo de la carpeta de inicio, que Windows retrasaba más de 2 minutos.
 - **v1.9** (04/11/2026): corregido que, con la batería del G535 por debajo de ~4,1 V (≈ 86 %), el programa creyera los auriculares apagados y no volviera a la salida principal al encenderlos.
 - **v1.8** (03/11/2026): arranque con Windows desde el menú del icono (acceso directo en la carpeta de inicio, arranca oculto) y notas técnicas para otras sesiones.

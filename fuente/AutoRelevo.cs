@@ -540,11 +540,13 @@ class MainForm : Form
 
     void SaveConfig()
     {
+        if (File.Exists(configPath)) File.SetAttributes(configPath, FileAttributes.Normal);
         File.WriteAllLines(configPath, new string[] {
             "principal=" + Selected(primary),
             "secundario=" + Selected(secondary),
             "on=" + (on ? "1" : "0")
         });
+        File.SetAttributes(configPath, FileAttributes.Hidden);
     }
 
     void Changed()
